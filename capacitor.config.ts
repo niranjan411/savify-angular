@@ -3,7 +3,7 @@ import type { CapacitorConfig } from '@capacitor/cli';
 const config: CapacitorConfig = {
   appId: 'com.savify.app',
   appName: 'savify',
-  webDir: 'dist'
+  webDir: 'dist/savify'
 };
 
 export default config;
