@@ -1,0 +1,13 @@
+<app-header></app-header>
+<router-outlet></router-outlet>
+<app-drawer></app-drawer>
+
+<!-- Toast notifications -->
+<div class="toast-container">
+  @for (toast of state.toasts(); track toast.id) {
+    <div class="toast" [class.success]="toast.type === 'success'">
+      <ion-icon [name]="toast.type === 'success' ? 'checkmark-circle' : 'information-circle'" class="toast-icon"></ion-icon>
+      {{ toast.message }}
+    </div>
+  }
+</div>

@@ -1,0 +1,125 @@
+<main class="item-detail" [style.--cat-color]="state.selectedCategory()?.color"
+  [style.--cat-bg]="state.selectedCategory()?.bgColor">
+  <div class="detail-inner">
+
+    <!-- Header -->
+    <div class="detail-header">
+      <button class="back-btn" (click)="state.goBackToCategory()">
+        <ion-icon name="arrow-back"></ion-icon>
+      </button>
+      <div class="detail-header-mid">
+        <span class="breadcrumb">{{ state.selectedCategory()?.name }}</span>
+        <ion-icon name="chevron-forward" class="bc-sep"></ion-icon>
+        <span class="breadcrumb active">Detail</span>
+      </div>
+      <div class="detail-header-actions">
+        <!-- Auto-save indicator -->
+        <span class="save-indicator" [class.visible]="savedPulse">
+          <ion-icon name="checkmark-circle"></ion-icon> Saved
+        </span>
+        <!-- Delete -->
+        <button class="action-btn delete" (click)="confirmDelete = true">
+          <ion-icon name="trash-outline"></ion-icon>
+        </button>
+      </div>
+    </div>
+
+    @if (state.selectedItem(); as item) {
+    <div class="detail-card">
+
+      <!-- Category badge & dates -->
+      <div class="detail-card-top">
+        <div class="detail-icon">
+          <ion-icon [name]="state.selectedCategory()?.icon || 'document'"></ion-icon>
+        </div>
+        <div class="detail-meta">
+          <span class="detail-cat-badge">{{ state.selectedCategory()?.name }}</span>
+          <div class="detail-dates">
+            <span><ion-icon name="calendar-outline"></ion-icon> {{ formatDate(item.createdAt) }}</span>
+            <span><ion-icon name="sync-outline"></ion-icon> {{ formatDate(item.updatedAt) }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Editable Title -->
+      <div class="edit-field-wrap" [class.focused]="editingTitle">
+        <div class="edit-hint" [class.hidden]="editingTitle">
+          <ion-icon name="create-outline"></ion-icon> Tap to edit
+        </div>
+        @if (editingTitle) {
+        <input class="inline-title-input" type="text" [value]="editTitle"
+          (input)="onTitleChange($any($event.target).value)" (blur)="blurTitle()" placeholder="Item title..."
+          autofocus />
+        } @else {
+        <h1 class="detail-title tappable" (click)="startEditTitle()">{{ editTitle || item.title }}</h1>
+        }
+      </div>
+
+      <div class="detail-divider"></div>
+
+      <!-- Editable Content -->
+      <div class="detail-data-section">
+        <div class="section-label">
+          <ion-icon name="document-text-outline"></ion-icon>
+          Content
+        </div>
+
+        <div class="edit-field-wrap data-wrap" [class.focused]="editingData">
+          <div class="edit-hint" [class.hidden]="editingData">
+            <ion-icon name="create-outline"></ion-icon> Tap to edit
+          </div>
+          @if (editingData) {
+          <textarea class="inline-data-input" [value]="editData" (input)="onDataChange($any($event.target).value)"
+            (blur)="blurData()" placeholder="Enter content..." rows="8" autofocus></textarea>
+          } @else {
+          <div class="detail-data-box tappable" (click)="startEditData()">
+            @if (editData || item.data) {
+            @for (line of (editData || item.data).split('\n'); track $index) {
+            <p class="data-line" [class.empty-line]="!line.trim()">{{ line || '\u00a0' }}</p>
+            }
+            } @else {
+            <p class="data-placeholder">Tap to add content...</p>
+            }
+          </div>
+          }
+        </div>
+      </div>
+
+      <!-- Copy action -->
+      <div class="detail-actions-row">
+        <button class="action-pill copy" (click)="copyToClipboard(editData || item.data)">
+          <ion-icon name="copy-outline"></ion-icon>
+          Copy content
+        </button>
+      </div>
+
+    </div>
+    } @else {
+    <div class="not-found">
+      <ion-icon name="alert-circle-outline"></ion-icon>
+      <h3>Item not found</h3>
+      <button class="back-link" (click)="state.goBackToCategory()">Go back</button>
+    </div>
+    }
+
+  </div>
+</main>
+
+<!-- Delete Confirm -->
+@if (confirmDelete) {
+<div class="modal-overlay" (click)="confirmDelete = false"></div>
+<div class="confirm-modal">
+  <div class="confirm-icon">
+    <ion-icon name="trash"></ion-icon>
+  </div>
+  <h3>Delete item?</h3>
+  <p>This action cannot be undone. The item will be permanently removed.</p>
+  <div class="confirm-actions">
+    <button class="btn-cancel-del" (click)="confirmDelete = false">Cancel</button>
+    <button class="btn-confirm-del" (click)="doDelete()">
+      <ion-icon name="trash-outline"></ion-icon>
+      Delete
+    </button>
+  </div>
+</div>
+}

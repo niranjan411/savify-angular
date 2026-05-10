@@ -1,0 +1,127 @@
+<main class="dashboard">
+  <div class="dashboard-inner">
+
+    <!-- Hero -->
+    <section class="hero">
+      <div class="hero-text">
+        <h1 class="hero-title">Your<br><span class="accent-text">Personal Vault</span></h1>
+        <p class="hero-sub">{{ getTotalItems() }} items safely stored</p>
+      </div>
+      <div class="hero-stats">
+        <div class="stat-chip">
+          <span class="stat-num">{{ state.categories().length }}</span>
+          <span class="stat-label">Categories</span>
+        </div>
+        <div class="stat-chip">
+          <span class="stat-num">{{ getTotalItems() }}</span>
+          <span class="stat-label">Total items</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Search -->
+    <div class="search-wrap">
+      <div class="search-bar">
+        <ion-icon name="search-outline" class="search-icon"></ion-icon>
+        <input type="search" placeholder="Search categories..." [(ngModel)]="searchQuery" class="search-input"
+          autocomplete="off" />
+        @if (searchQuery) {
+        <button class="clear-btn" (click)="searchQuery = ''">
+          <ion-icon name="close-circle"></ion-icon>
+        </button>
+        }
+      </div>
+    </div>
+
+    <!-- Section Label -->
+    <div class="section-header">
+      <h2 class="section-title">Categories</h2>
+      <span class="section-count">{{ state.filteredCategories().length }}</span>
+    </div>
+
+    <!-- Grid -->
+    @if (state.filteredCategories().length > 0) {
+    <div class="categories-grid">
+      @for (cat of state.filteredCategories(); track cat.id; let i = $index) {
+      <div class="category-card" [style.--card-color]="cat.color" [style.--card-bg]="cat.bgColor"
+        [style.animation-delay]="(i * 0.05) + 's'" (click)="openCategory(cat.id)">
+        <!-- Top band -->
+        <div class="card-band">
+          <div class="card-icon-wrap">
+            <ion-icon [name]="cat.icon"></ion-icon>
+          </div>
+          <div class="card-count-badge">{{ cat.count }}</div>
+        </div>
+
+        <!-- Bottom pocket -->
+        <div class="card-pocket">
+          <h3 class="card-name">{{ cat.name }}</h3>
+          <p class="card-subtitle">{{ cat.subtitle }}</p>
+        </div>
+      </div>
+      }
+    </div>
+    } @else {
+    <div class="empty-state">
+      <div class="empty-icon">
+        <ion-icon name="search-outline"></ion-icon>
+      </div>
+      <h3>No categories found</h3>
+      <p>Try a different search term</p>
+      <button class="reset-btn" (click)="searchQuery = ''">Clear search</button>
+    </div>
+    }
+  </div>
+</main>
+
+<!-- FAB -->
+<button class="fab" (click)="openAddModal()" aria-label="Add new entry">
+  <ion-icon name="add"></ion-icon>
+</button>
+
+<!-- Add Entry Modal -->
+@if (showModal) {
+<div class="modal-overlay" (click)="closeAddModal()"></div>
+<div class="bottom-sheet" role="dialog" aria-modal="true">
+  <div class="sheet-handle"></div>
+  <div class="sheet-header">
+    <h2 class="sheet-title">Add New Entry</h2>
+    <button class="close-btn" (click)="closeAddModal()">✕</button>
+  </div>
+  <div class="sheet-body">
+
+    <!-- Category Selection -->
+    <div class="field-group">
+      <label class="field-label">Category</label>
+      <div class="category-chips">
+        @for (cat of state.categories(); track cat.id) {
+        <button class="cat-chip" [class.selected]="newCategoryId === cat.id" [style.--chip-color]="cat.color"
+          [style.--chip-bg]="cat.bgColor" (click)="newCategoryId = cat.id">
+          <ion-icon [name]="cat.icon"></ion-icon>
+          <span>{{ cat.name }}</span>
+        </button>
+        }
+      </div>
+    </div>
+
+    <!-- Title -->
+    <div class="field-group">
+      <label class="field-label" for="entry-title">Title <span class="required">*</span></label>
+      <input id="entry-title" type="text" class="field-input" placeholder="Enter a title..." [(ngModel)]="newTitle"
+        maxlength="80" />
+    </div>
+
+    <!-- Content -->
+    <div class="field-group">
+      <label class="field-label" for="entry-desc">Content</label>
+      <textarea id="entry-desc" class="field-input field-textarea" placeholder="Add some notes..." [(ngModel)]="newData"
+        rows="3" maxlength="500"></textarea>
+    </div>
+
+    <button class="save-btn" [disabled]="!newTitle.trim() || !newCategoryId" (click)="saveEntry()">
+      <span>Save Entry</span>
+      <span>✓</span>
+    </button>
+  </div>
+</div>
+}

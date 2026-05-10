@@ -1,0 +1,18 @@
+<header class="header">
+  <div class="header-inner">
+    <div class="logo">
+      <span class="logo-icon">✦</span>
+      <span class="logo-text">Savify</span>
+    </div>
+    <div class="header-actions">
+      <button class="icon-btn theme-btn" (click)="state.toggleDarkMode()" [title]="state.darkMode() ? 'Light mode' : 'Dark mode'">
+        <ion-icon [name]="state.darkMode() ? 'sunny-outline' : 'moon-outline'"></ion-icon>
+      </button>
+      <button class="icon-btn menu-btn" (click)="state.toggleDrawer()" [class.active]="state.drawerOpen()" aria-label="Menu">
+        <span class="hamburger" [class.open]="state.drawerOpen()">
+          <span></span><span></span><span></span>
+        </span>
+      </button>
+    </div>
+  </div>
+</header>

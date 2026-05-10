@@ -1,0 +1,122 @@
+<main class="cat-list" [style.--cat-color]="state.selectedCategory()?.color" [style.--cat-bg]="state.selectedCategory()?.bgColor">
+  <div class="cat-list-inner">
+
+    <!-- Back Header -->
+    <div class="page-header">
+      <button class="back-btn" (click)="state.goBack()">
+        <ion-icon name="arrow-back"></ion-icon>
+      </button>
+      <div class="page-header-info">
+        <div class="cat-icon-circle">
+          <ion-icon [name]="state.selectedCategory()?.icon || 'folder'"></ion-icon>
+        </div>
+        <div>
+          <h1 class="page-title">{{ state.selectedCategory()?.name }}</h1>
+          <p class="page-sub">{{ state.selectedCategory()?.subtitle }}</p>
+        </div>
+      </div>
+      <button class="add-item-btn" (click)="openAddModal()">
+        <ion-icon name="add"></ion-icon>
+      </button>
+    </div>
+
+    <!-- Stats Bar -->
+    <div class="stats-bar">
+      <div class="stat-pill">
+        <ion-icon name="albums-outline"></ion-icon>
+        <span>{{ state.itemsForCategory().length }} item{{ state.itemsForCategory().length !== 1 ? 's' : '' }}</span>
+      </div>
+      <div class="stat-pill">
+        <ion-icon name="time-outline"></ion-icon>
+        <span>Last updated {{ getLastUpdated() }}</span>
+      </div>
+    </div>
+
+    <!-- Search -->
+    <div class="list-search">
+      <ion-icon name="search-outline" class="ls-icon"></ion-icon>
+      <input
+        type="search"
+        placeholder="Search in {{ state.selectedCategory()?.name }}..."
+        [(ngModel)]="itemSearch"
+        class="ls-input"
+        autocomplete="off"
+      />
+      @if (itemSearch) {
+        <button class="ls-clear" (click)="itemSearch = ''">
+          <ion-icon name="close-circle"></ion-icon>
+        </button>
+      }
+    </div>
+
+    <!-- Items List -->
+    @if (state.isLoadingItems()) {
+      <div class="loading-wrap">
+        <div class="spinner"></div>
+        <p>Loading items...</p>
+      </div>
+    } @else if (filteredItems().length > 0) {
+      <div class="items-list">
+        @for (item of filteredItems(); track item.id; let i = $index) {
+          <div class="item-row" [style.animation-delay]="(i * 0.04) + 's'" (click)="openItem(item.id)">
+            <div class="item-row-left">
+              <div class="item-number">{{ i + 1 }}</div>
+              <div class="item-info">
+                <h3 class="item-title">{{ item.title }}</h3>
+                <p class="item-preview">{{ getPreview(item.data) }}</p>
+              </div>
+            </div>
+            <div class="item-row-right">
+              <span class="item-date">{{ formatDate(item.updatedAt) }}</span>
+              <ion-icon name="chevron-forward" class="item-arrow"></ion-icon>
+            </div>
+          </div>
+        }
+      </div>
+    } @else {
+      <div class="empty-list">
+        <div class="empty-icon-wrap">
+          <ion-icon [name]="state.selectedCategory()?.icon || 'folder-open-outline'"></ion-icon>
+        </div>
+        <h3>{{ itemSearch ? 'No results found' : 'Nothing here yet' }}</h3>
+        <p>{{ itemSearch ? 'Try a different search term' : 'Tap + to add your first item' }}</p>
+        @if (!itemSearch) {
+          <button class="add-first-btn" (click)="openAddModal()">
+            <ion-icon name="add-circle-outline"></ion-icon>
+            Add first item
+          </button>
+        }
+      </div>
+    }
+  </div>
+</main>
+
+<!-- Add Item Modal -->
+@if (showAddModal) {
+  <div class="modal-overlay" (click)="closeAddModal()"></div>
+  <div class="add-modal">
+    <div class="add-modal-header">
+      <h2>New Item</h2>
+      <button class="modal-close" (click)="closeAddModal()">
+        <ion-icon name="close"></ion-icon>
+      </button>
+    </div>
+    <div class="add-modal-body">
+      <div class="form-group">
+        <label>Title</label>
+        <input type="text" [(ngModel)]="newTitle" placeholder="Enter title..." class="form-input" />
+      </div>
+      <div class="form-group">
+        <label>Data</label>
+        <textarea [(ngModel)]="newData" placeholder="Enter content..." class="form-textarea" rows="5"></textarea>
+      </div>
+    </div>
+    <div class="add-modal-footer">
+      <button class="btn-cancel" (click)="closeAddModal()">Cancel</button>
+      <button class="btn-save" (click)="saveItem()" [disabled]="!newTitle.trim()">
+        <ion-icon name="checkmark"></ion-icon>
+        Save Item
+      </button>
+    </div>
+  </div>
+}

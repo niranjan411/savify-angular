@@ -1,0 +1,64 @@
+@if (state.modalOpen()) {
+  <div class="overlay" (click)="close()"></div>
+  <div class="bottom-sheet" role="dialog" aria-modal="true" aria-label="Add new entry">
+    <div class="sheet-handle"></div>
+    <div class="sheet-header">
+      <h2 class="sheet-title">Add New Entry</h2>
+      <button class="close-btn" (click)="close()">✕</button>
+    </div>
+
+    <div class="sheet-body">
+      <!-- Category Selection -->
+      <div class="field-group">
+        <label class="field-label">Category</label>
+        <div class="category-chips">
+          @for (cat of state.categories(); track cat.id) {
+            <button
+              class="cat-chip"
+              [class.selected]="selectedCategory() === cat.id"
+              [style.--chip-color]="cat.color"
+              [style.--chip-bg]="cat.bgColor"
+              (click)="selectedCategory.set(cat.id)"
+            >
+              <span>{{ cat.icon }}</span>
+              <span>{{ cat.name }}</span>
+            </button>
+          }
+        </div>
+      </div>
+
+      <!-- Title -->
+      <div class="field-group">
+        <label class="field-label" for="entry-title">Title <span class="required">*</span></label>
+        <input
+          id="entry-title"
+          type="text"
+          class="field-input"
+          placeholder="Enter a title..."
+          [value]="title()"
+          (input)="title.set($any($event.target).value)"
+          maxlength="80"
+        />
+      </div>
+
+      <!-- Description -->
+      <div class="field-group">
+        <label class="field-label" for="entry-desc">Description</label>
+        <textarea
+          id="entry-desc"
+          class="field-input field-textarea"
+          placeholder="Add some notes..."
+          [value]="description()"
+          (input)="description.set($any($event.target).value)"
+          rows="3"
+          maxlength="500"
+        ></textarea>
+      </div>
+
+      <button class="save-btn" [disabled]="!isValid()" (click)="save()">
+        <span>Save Entry</span>
+        <span>✓</span>
+      </button>
+    </div>
+  </div>
+}

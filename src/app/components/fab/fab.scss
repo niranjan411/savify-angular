@@ -1,0 +1,43 @@
+.fab {
+  position: fixed;
+  bottom: 28px;
+  right: 24px;
+  z-index: 350;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--accent);
+  color: white;
+  border-radius: var(--radius-full);
+  padding: 14px 20px 14px 16px;
+  font-size: 15px;
+  font-weight: 600;
+  font-family: var(--font-body);
+  box-shadow: var(--shadow-fab);
+  transition: all 0.3s cubic-bezier(0.34,1.56,0.64,1);
+
+  &:hover {
+    background: var(--accent-hover);
+    transform: scale(1.06);
+    box-shadow: 0 12px 32px rgba(255,107,53,0.45);
+  }
+
+  &:active { transform: scale(0.95); }
+
+  &.active {
+    background: var(--text-primary);
+    .fab-icon { transform: rotate(45deg); }
+  }
+}
+
+.fab-icon {
+  font-size: 22px;
+  line-height: 1;
+  font-weight: 300;
+  transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1);
+}
+.fab-label { font-size: 14px; }
+
+@media (max-width: 480px) {
+  .fab { bottom: 20px; right: 16px; }
+}
