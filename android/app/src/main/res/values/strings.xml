@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">savify</string>
+    <string name="title_activity_main">savify</string>
+    <string name="package_name">com.savify.app</string>
+    <string name="custom_url_scheme">com.savify.app</string>
+</resources>
